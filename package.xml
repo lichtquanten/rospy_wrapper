@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>rospy_wrapper</name>
+  <version>0.0.0</version>
+  <description>The rospy_wrapper package</description>
+
+  <maintainer email="sean@hackett.pw">Sean Hackett</maintainer>
+  <license>MIT</license>
+  <url type="repository">http://github.com/sean-hackett/rospy-wrapper</url>
+
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>rosbag</exec_depend>
+  <exec_depend>rospy_message_converter</exec_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+  </export>
+</package>
