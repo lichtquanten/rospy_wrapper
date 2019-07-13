@@ -29,6 +29,7 @@ with ROSBagSource(
 Create a custom source
 ```python
 from rospywrapper import Source
+import rospy
 import numpy as np
 import cv2
 
@@ -56,7 +57,7 @@ class VideoFileSource(Source):
       _, frame = self.video.read()
       t = self.time
       self.time += self.step
-      return frame, t
+      return frame, rospy.Time.from_sec(t)
 ```
 Use the custom source
 ```python
