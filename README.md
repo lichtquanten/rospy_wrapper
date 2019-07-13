@@ -51,10 +51,12 @@ class VideoFileSource(Source):
       return self
 
   def next(self):
-      while self.video.isOpened():
-          ret, frame = self.video.read()
-          yield frame, self.time
-          self.time += self.step
+      if not self.video.isOpened():
+          raise StopIteration
+      _, frame = self.video.read()
+      t = self.time
+      self.time += self.step
+      return frame, t
 ```
 Use the custom source
 ```python
