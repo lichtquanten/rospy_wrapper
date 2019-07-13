@@ -42,6 +42,7 @@ class VideoFileSource(Source):
       self.video = cv2.VideoCapture(self.filename)
       fps = self.video.get(cv2.CAP_PROP_FPS)
       self.step = 1./fps
+      return self
 
   def __exit__(self):
       self.video.release()
