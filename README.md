@@ -50,7 +50,7 @@ class VideoFileSource(Source):
   def __iter__(self):
       return self
 
-  def __next__(self):
+  def next(self):
       while self.video.isOpened():
           ret, frame = self.video.read()
           yield frame, self.time
