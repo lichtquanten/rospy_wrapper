@@ -8,11 +8,8 @@ class Sink(object):
         pass
 
     @abstractmethod
-    def put(self, data, start_time, end_time):
+    def put(self, data, t):
         pass
-
-    def set_topics(self, headers):
-        self.headers = headers
 
     def __enter__(self):
         return self
@@ -21,52 +18,37 @@ class Sink(object):
         pass
 
 class CSVSink(Sink):
-    def __init__(self, filename):
+    def __init__(self, filename, fieldnames):
         self.filename = filename
-        self.headers = None
+        self.fieldnames = fieldnames
         self.file = None
         self.writer = None
 
-    def set_topics(self, headers):
-        self.headers = headers
-        self.writer.writerow(['start_time', 'end_time'] + headers)
-
-    def put(self, data, start_time, end_time):
-        if self.headers is None:
-            raise Exception('Must set headers before putting data to Sink.')
-        row = [start_time, end_time]
-        for label in self.headers:
-            row.append(data[label])
+    def put(self, data, t):
+        row = [t] + [data[field] for field in self.fieldnames]
         self.writer.writerow(row)
 
     def __enter__(self):
         self.file = open(self.filename, 'w')
         self.writer = csv.writer(self.file)
+        self.writer.writerow(['time'] + self.fieldnames)
         return self
 
     def __exit__(self, *exc):
         self.file.close()
 
 class ROSLiveSink(Sink):
-    def __init__(self, topic, msg_type):
+    def __init__(self, topic, data_type):
         self.topic = topic
-        self.msg_type = msg_type
-        self.headers = None
-        self.publisher = None
+        self.data_type = data_type
+        self._publisher = None
 
-    def put(self, data, start_time, end_time):
-        if self.headers is None:
-            raise Exception('Must set headers before putting data to Sink.')
-        self.publisher.publish(
-            {
-                'start_time': start_time,
-                'end_time': end_time,
-                'data': {data[label] for label in self.headers}
-            })
+    def put(self, data, t):
+        self._publisher.publish(data)
 
     def __enter__(self):
-        self.publisher = rospy.Publisher(self.topic, self.msg_type)
+        self._publisher = rospy.Publisher(self.topic, self.data_type)
         return self
 
     def __exit__(self, *exc):
-        self.publisher.unregister()
+        self._publisher.unregister()
