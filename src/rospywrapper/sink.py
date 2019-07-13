@@ -21,8 +21,7 @@ class Sink(object):
         pass
 
 class CSVSink(Sink):
-    def __init__(self, window_duration, filename):
-        self.window_duration = window_duration
+    def __init__(self, filename):
         self.filename = filename
         self.headers = None
         self.file = None
@@ -49,8 +48,7 @@ class CSVSink(Sink):
         self.file.close()
 
 class ROSLiveSink(Sink):
-    def __init__(self, window_duration, topic, msg_type):
-        self.window_duration = window_duration
+    def __init__(self, topic, msg_type):
         self.topic = topic
         self.msg_type = msg_type
         self.headers = None
