@@ -52,3 +52,11 @@ class ROSLiveSink(Sink):
 
     def __exit__(self, *exc):
         self._publisher.unregister()
+
+class ROSBagSink(Sink):
+    def __init__(self, topic, bag):
+        self.topic = topic
+        self.bag = bag
+
+    def put(self, data, t):
+        self.bag.write(self.topic, data, t)
