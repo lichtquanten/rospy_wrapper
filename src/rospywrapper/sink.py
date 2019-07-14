@@ -1,5 +1,4 @@
 from abc import ABCMeta, abstractmethod
-import csv
 import rospy
 
 class Sink(object):

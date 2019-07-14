@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 import rosbag
-from rospy_message_converter import message_converter
 import rospy
+from rospy_message_converter import message_converter
 
 class Source(object):
     __metaclass__ = ABCMeta
