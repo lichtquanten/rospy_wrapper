@@ -46,6 +46,9 @@ sink = ROSBagSink(filename='output.bag')
 ```
 Write from source to sink
 ```python
+import cv2
+import numpy as np
+
 with source, sink:
   for msg, t in source:
     data = np.fromstring(msg['data'], np.uint8)
@@ -55,9 +58,10 @@ with source, sink:
 ```
 Create a custom source
 ```python
-from rospywrapper import Source
-import rospy
 import cv2
+import rospy
+
+from rospywrapper import Source
 
 class VideoFileSource(Source):
   def __init__(self, filename, start_time=0):
