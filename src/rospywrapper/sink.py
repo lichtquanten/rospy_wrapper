@@ -7,7 +7,7 @@ class Sink(object):
         pass
 
     @abstractmethod
-    def put(self, data, t):
+    def put(self, topic, data_class, data, t):
         pass
 
     def __enter__(self):
@@ -16,46 +16,36 @@ class Sink(object):
     def __exit__(self, *exc):
         pass
 
-class CSVSink(Sink):
-    def __init__(self, filename, fieldnames):
-        self.filename = filename
-        self.fieldnames = fieldnames
-        self.file = None
-        self.writer = None
+class ROSTopicSink(Sink):
+    def __init__(self):
+        self._publishers = {}
 
-    def put(self, data, t):
-        row = [t] + [data[field] for field in self.fieldnames]
-        self.writer.writerow(row)
+    def put(self, topic, data_class, data, t):
+        if topic not in self._publishers:
+            self._publishers[topic] = rospy.Publisher(topic, data_class)
+        self._publishers[topic].publish(data)
 
     def __enter__(self):
-        self.file = open(self.filename, 'w')
-        self.writer = csv.writer(self.file)
-        self.writer.writerow(['time'] + self.fieldnames)
         return self
 
     def __exit__(self, *exc):
-        self.file.close()
-
-class ROSLiveSink(Sink):
-    def __init__(self, topic, data_type):
-        self.topic = topic
-        self.data_type = data_type
-        self._publisher = None
-
-    def put(self, data, t):
-        self._publisher.publish(data)
-
-    def __enter__(self):
-        self._publisher = rospy.Publisher(self.topic, self.data_type)
-        return self
-
-    def __exit__(self, *exc):
-        self._publisher.unregister()
+        for _, publisher in self._publishers:
+            publisher.unregister()
+        self._publishers = {}
 
 class ROSBagSink(Sink):
-    def __init__(self, topic, bag):
-        self.topic = topic
-        self.bag = bag
+    def __init__(self, filename):
+        self.filename = filename
+        self._bag = None
 
-    def put(self, data, t):
-        self.bag.write(self.topic, data, t)
+    def __enter__(self):
+        self._bag = rosbag.Bag(self.filename, 'w')
+        self._bag.__enter__()
+        return self
+
+    def __exit__(self, *exc):
+        self._bag.__exit__(None, None, None)
+        self._bag = None
+
+    def put(self, topic, data_class, data, t):
+        self._bag.write(topic, data, t)
