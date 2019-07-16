@@ -2,6 +2,8 @@
 
 A package that allows easy interchanging of ROS topics, rosbags, and other sources of and sinks for data.
 
+Note: To use ROSTopicSource or ROSTopicSink, there must have been a previous call to rospy.init_node().
+
 ## Usage
 Instantiate a topic source
 ```python
