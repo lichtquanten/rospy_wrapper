@@ -45,9 +45,9 @@ class ROSTopicSource(Source):
     def _callback(self, msg):
         msg = message_converter.convert_ros_message_to_dictionary(msg)
         if self.threadsafe:
-            self._buffer.put((data, rospy.get_rostime()))
+            self._buffer.put((msg, rospy.get_rostime()))
         else:
-            self._buffer.append((data, rospy.get_rostime()))
+            self._buffer.append((msg, rospy.get_rostime()))
 
     def __enter__(self):
         self._subscriber = rospy.Subscriber(
