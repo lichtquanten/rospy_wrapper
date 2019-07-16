@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+import rosbag
 import rospy
 
 class Sink(object):
@@ -48,4 +49,4 @@ class ROSBagSink(Sink):
         self._bag = None
 
     def put(self, topic, data_class, data, t):
-        self._bag.write(topic, data, t)
+        self._bag.write(topic, data_class(data), t)
