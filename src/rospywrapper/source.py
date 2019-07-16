@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 import rosbag
 import rospy
 import Queue
+import time
 
 from rospy_message_converter import message_converter
 
