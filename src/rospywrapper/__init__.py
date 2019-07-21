@@ -1,2 +1,2 @@
-from .sink import Sink, ROSTopicSink, ROSBagSink
-from .source import Source, ROSTopicSource, ROSBagSource
+from .sink import Sink, TopicSink, BagSink
+from .source import Source, TopicSource, BagSource
