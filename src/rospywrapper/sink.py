@@ -1,14 +1,27 @@
 from abc import ABCMeta, abstractmethod
+import genpy
 import rosbag
 import rospy
 
 class Sink(object):
+    """Base class for sink objects.
+
+    Subclasses should implement method to receive data.
+    """
+
     __metaclass__ = ABCMeta
+
     def __init__(self):
         pass
 
     @abstractmethod
-    def put(self, topic, data_class, data, t):
+    def put(self, data, t):
+        """Write data to the sink.
+
+        Args:
+            data: Anything.
+            t (rospy.time.Time): A timestamp for `data`.
+        """
         pass
 
     def __enter__(self):
@@ -17,36 +30,55 @@ class Sink(object):
     def __exit__(self, *exc):
         pass
 
-class ROSTopicSink(Sink):
-    def __init__(self):
-        self._publishers = {}
+class TopicSink(Sink):
+    """A class for publishing data to ROS topics."""
 
-    def put(self, topic, data_class, data, t):
-        if topic not in self._publishers:
-            self._publishers[topic] = rospy.Publisher(topic, data_class)
-        self._publishers[topic].publish(data)
+    def __init__(self, topic, data_class):
+        """
+        Args:
+            topic (str): The resource name of a topic.
+            data_class (genpy.Message): Messsage class for serialization of `data.`
+        """
+        self._topic = topic
+        self._data_class = data_class
+
+    def put(self, data, t):
+        """Publish data to the topic specified in the constructor.
+
+        Args:
+            data: An acceptable input to the `data_class` constructor, where
+            `data_class` is given in the constructor.
+            t (rospy.time.Time): A timestamp for `data`.
+        """
+        self._publisher.publish(data)
 
     def __enter__(self):
+        """Register the publisher."""
+        self._publisher = rospy.Publisher(self._topic, self._data_class)
         return self
 
     def __exit__(self, *exc):
-        for _, publisher in self._publishers:
-            publisher.unregister()
-        self._publishers = {}
+        """Unregister the publisher."""
+        self._publisher.unregister()
 
-class ROSBagSink(Sink):
-    def __init__(self, filename):
-        self.filename = filename
-        self._bag = None
+class BagSink(Sink):
+    """Class for writing data to a bag file."""
 
-    def __enter__(self):
-        self._bag = rosbag.Bag(self.filename, 'w')
-        self._bag.__enter__()
-        return self
+    def __init__(self, bag, topic, data_class):
+        """
+        Args:
+            bag (rosbag.bag.Bag): A `bag` object.
+            topic (str): The resource name of a topic.
+            data_class (genpy.Message): Messsage class for serialization.
+        """
+        self._bag = bag
 
-    def __exit__(self, *exc):
-        self._bag.__exit__(None, None, None)
-        self._bag = None
+    def put(self, data, t):
+        """Write `data` to the bag at time `t`.
 
-    def put(self, topic, data_class, data, t):
+        Args:
+            data: An acceptable input to the `data_class` constructor, where
+            `data_class` is given in the constructor.
+            t (rospy.time.Time): A timestamp for `data`.
+        """
         self._bag.write(topic, data_class(data), t)
