@@ -67,7 +67,7 @@ class BagSink(Sink):
     def __init__(self, bag, topic, data_class):
         """
         Args:
-            bag (rosbag.bag.Bag): A `bag` object.
+            bag (rosbag.bag.Bag): A `bag` object with write permissions.
             topic (str): The resource name of a topic.
             data_class (genpy.Message): Messsage class for serialization.
         """
