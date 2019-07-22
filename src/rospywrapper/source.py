@@ -2,7 +2,6 @@ from abc import ABCMeta, abstractmethod
 import rosbag
 import rospy
 import Queue
-import time
 
 class Source(object):
     """Base class for source objects.
@@ -84,7 +83,7 @@ class TopicSource(Source):
                 if self._buffer:
                     return self._buffer.pop(0)
                 else:
-                    time.sleep(0.001)
+                    rospy.sleep(0.001)
 
     def _callback(self, msg):
         """Put message into buffer.
