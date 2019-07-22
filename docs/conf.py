@@ -43,6 +43,10 @@ extensions = ['sphinx.ext.napoleon']
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+autodoc_default_options = {'special-members': '__enter__, __exit__, __iter__'}
+autodoc_default_flags = ['members', 'undoc-members', 'inherited-members', 'show-inheritance']
+autoclass_content = 'both'
+
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
@@ -84,7 +88,6 @@ html_theme = 'pyramid'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

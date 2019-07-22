@@ -19,9 +19,9 @@ class Source(object):
     def __iter__(self):
         """
         Returns:
-            collections.Iterable: An interable consisting of tuples (data, t),
-            where `data` can be of any type and `t` is an instance of
-            rospy.time.Time.
+            collections.Iterable[(Any, rospy.time.Time)]: An interable
+                consisting of tuples (data, t), `t` is the timestamp of
+                some `data`.
         """
         pass
 
@@ -45,8 +45,8 @@ class TopicSource(Source):
         Args:
             topic (str): The resource name of a topic.
             data_class (genpy.Message): Messsage class for serialization of `data.`
-            threadsafe (bool): Should the buffer used to store incoming messages
-            be threadsafe. Defaults to False.
+                threadsafe (bool): Should the buffer used to store incoming messages
+                be threadsafe. Defaults to False.
         """
         self._topic = topic
         self._data_class = data_class
@@ -57,7 +57,7 @@ class TopicSource(Source):
             self._buffer = []
 
     def __iter__(self):
-        """Returns a generator with messages and timestamps, ordered by time of
+        """Returns a generating yielding messages and timestamps, ordered by time of
         receipt.
 
         Returns only when rospy.is_shutdown() returns True.

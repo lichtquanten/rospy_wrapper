@@ -19,7 +19,7 @@ class Sink(object):
         """Write data to the sink.
 
         Args:
-            data: Anything.
+            data: Data to be written to sink.
             t (rospy.time.Time): A timestamp for `data`.
         """
         pass
@@ -34,7 +34,7 @@ class TopicSink(Sink):
     """A class for publishing data to ROS topics."""
 
     def __init__(self, topic, data_class):
-        """
+        """Constructor.
         Args:
             topic (str): The resource name of a topic.
             data_class (genpy.Message): Messsage class for serialization of `data.`
@@ -47,7 +47,7 @@ class TopicSink(Sink):
 
         Args:
             data: An acceptable input to the `data_class` constructor, where
-            `data_class` is given in the constructor.
+                `data_class` is given in the constructor.
             t (rospy.time.Time): A timestamp for `data`.
         """
         self._publisher.publish(data)
@@ -80,7 +80,7 @@ class BagSink(Sink):
 
         Args:
             data: An acceptable input to the `data_class` constructor, where
-            `data_class` is given in the constructor.
+                `data_class` is given in the constructor.
             t (rospy.time.Time): A timestamp for `data`.
         """
         self._bag.write(self._topic, self._data_class(data), t)
