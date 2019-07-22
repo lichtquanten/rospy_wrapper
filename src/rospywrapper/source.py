@@ -7,7 +7,7 @@ import time
 class Source(object):
     """Base class for source objects.
 
-    Subclasses should implement __iter__.
+    Subclasses should implement next().
     """
 
     __metaclass__ = ABCMeta
@@ -15,13 +15,18 @@ class Source(object):
     def __init__(self):
         pass
 
-    @abstractmethod
     def __iter__(self):
+        return self
+
+    @abstractmethod
+    def next(self):
         """
         Returns:
-            collections.Iterable[(Any, rospy.time.Time)]: An interable
-                consisting of tuples (data, t), `t` is the timestamp of
-                some `data`.
+            (tuple): tuple containing:
+                data: Any data.
+                t (rospy.time.Time): A timestamp associated with `data`.
+        Raises:
+            StopIteration: When there is no more data.
         """
         pass
 
@@ -57,9 +62,10 @@ class TopicSource(Source):
             self._buffer = []
 
     def __iter__(self):
-        """Returns a generating yielding messages and timestamps, ordered by time of
-        receipt.
+        return self
 
+    def next(self):
+        """
         Returns only when rospy.is_shutdown() returns True.
 
         Yields:
@@ -69,11 +75,14 @@ class TopicSource(Source):
         """
         if self._threadsafe:
             while not rospy.is_shutdown():
-                yield self._buffer.get()
+                try:
+                    return self._buffer.get(block=False)
+                except Queue.Empty:
+                    time.sleep(0.001)
         else:
             while not rospy.is_shutdown():
                 if self._buffer:
-                    yield self._buffer.pop(0)
+                    return self._buffer.pop(0)
                 else:
                     time.sleep(0.001)
 
@@ -113,6 +122,7 @@ class BagSource(Source):
         self._topic = topic
 
     def __iter__(self):
+        """"""
         return self
 
     def next(self):
@@ -121,6 +131,8 @@ class BagSource(Source):
             (tuple): tuple containing:
                 msg (genpy.Message): The next message from `topic` in the bag.
                 t (rospy.time.Time): The time associated with `msg` in the bag.
+        Raises:
+            StopIteration: When there are no messages remaining in the bag.
         """
         _, msg, t = next(self._messages)
         return msg, t
