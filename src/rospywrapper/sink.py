@@ -72,6 +72,8 @@ class BagSink(Sink):
             data_class (genpy.Message): Messsage class for serialization.
         """
         self._bag = bag
+        self._topic = topic
+        self._data_class = data_class
 
     def put(self, data, t):
         """Write `data` to the bag at time `t`.
@@ -81,4 +83,4 @@ class BagSink(Sink):
             `data_class` is given in the constructor.
             t (rospy.time.Time): A timestamp for `data`.
         """
-        self._bag.write(topic, data_class(data), t)
+        self._bag.write(self._topic, self._data_class(data), t)

@@ -12,16 +12,19 @@ class TestTopic(unittest.TestCase):
 
     def test_bag(self):
         from std_msgs.msg import String
+        tmp = tempfile.mktemp()
+    	rospy.init_node('test_bag', anonymous=True)
         test_strs = ['a', 'b', 'c']
         times = []
-        with rosbag.Bag(tempfile.mktemp(), 'w') as bag:
-            sink = BagSink(bag, '/test_bag', String)
+        topic = '/test_bag'
+        with rosbag.Bag(tmp, 'w') as bag:
+            sink = BagSink(bag, topic, String)
             with sink:
                 for s in test_strs:
                     t = rospy.Time.now()
                     times.append(t)
                     sink.put(s, t)
-        source = BagSource('/test_topic', String)
+        source = BagSource(tmp, topic)
         with source:
             for msg, t in source:
                 self.assertTrue(msg.data in test_strs)

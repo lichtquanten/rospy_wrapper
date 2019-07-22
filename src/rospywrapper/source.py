@@ -103,14 +103,14 @@ class TopicSource(Source):
 class BagSource(Source):
     """A class that produces data from a bag."""
 
-    def __init__(self, topic, pathname):
+    def __init__(self, pathname, topic):
         """
         Args:
             topic (str): The name of a topic in the bag.
             pathname (str): A path to a bag file.
         """
-        self._topic = topic
         self._pathname = pathname
+        self._topic = topic
 
     def __iter__(self):
         return self

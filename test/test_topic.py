@@ -1,5 +1,5 @@
 import rospy
-import timeout_decorator
+import time
 import unittest
 
 from rospywrapper import TopicSource, TopicSink
@@ -10,12 +10,14 @@ TIMEOUT = 20
 
 class TestTopic(unittest.TestCase):
 
-    @timeout_decorator.timeout(TIMEOUT)
     def test_topic(self):
         from std_msgs.msg import String
-        source = TopicSource('/test_topic', String)
-        sink = TopicSink('/test_topic', String)
+	rospy.init_node('test_topic', anonymous=True)
+        topic = '/test_topic'
+        source = TopicSource(topic, String)
+        sink = TopicSink(topic, String)
         with source, sink:
+            time.sleep(2)
             test_strs = ['a', 'b', 'c']
             for s in test_strs:
                 sink.put(s, rospy.Time.now())
