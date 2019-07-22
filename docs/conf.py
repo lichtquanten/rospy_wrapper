@@ -46,6 +46,7 @@ templates_path = ['_templates']
 autodoc_default_options = {'special-members': '__enter__, __exit__, __iter__'}
 autodoc_default_flags = ['members', 'undoc-members', 'inherited-members', 'show-inheritance']
 autoclass_content = 'both'
+autodoc_member_order = 'bysource'
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
