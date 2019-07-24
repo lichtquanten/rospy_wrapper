@@ -77,7 +77,7 @@ class TopicSource(Source):
                 try:
                     return self._buffer.get(block=False)
                 except Queue.Empty:
-                    time.sleep(0.001)
+                    rospy.sleep(0.001)
         else:
             while not rospy.is_shutdown():
                 if self._buffer:
