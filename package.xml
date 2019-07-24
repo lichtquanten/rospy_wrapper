@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>rospy_wrapper</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>The rospy_wrapper package</description>
 
   <maintainer email="seanhackett55@gmail.com">Sean Hackett</maintainer>
