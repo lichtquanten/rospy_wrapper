@@ -16,8 +16,10 @@ class TestTopic(unittest.TestCase):
         topic = '/test_topic'
         source = TopicSource(topic, String)
         sink = TopicSink(topic, String)
+	pub = rospy.Publisher(topic, String)
         with source, sink:
-            time.sleep(2)
+            while pub.get_num_connections() < 1:
+		    rospy.sleep(2)
             test_strs = ['a', 'b', 'c']
             for s in test_strs:
                 sink.put(s, rospy.Time.now())
