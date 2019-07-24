@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>rospy_wrapper</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>The rospy_wrapper package</description>
 
-  <maintainer email="sean@hackett.pw">Sean Hackett</maintainer>
+  <maintainer email="seanhackett55@gmail.com">Sean Hackett</maintainer>
   <license>MIT</license>
+  <url type="website">http://ros.org/wiki/rospy_wrapper</url>
   <url type="repository">http://github.com/sean-hackett/rospy-wrapper</url>
+  <url type="bugtracker">http://github.com/sean-hackett/rospy-wrapper/issues</url>
 
   <build_depend>message_generation</build_depend>
   <build_depend>std_msgs</build_depend>
