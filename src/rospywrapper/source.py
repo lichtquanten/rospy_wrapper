@@ -93,10 +93,14 @@ class TopicSource(Source):
         Args:
             msg (genpy.Message): Message to add to buffer.
         """
+        try:
+            t = msg.header.stamp
+        except:
+            t = rospy.get_rostime()
         if self._threadsafe:
-            self._buffer.put((msg, rospy.get_rostime()))
+            self._buffer.put((msg, t))
         else:
-            self._buffer.append((msg, rospy.get_rostime()))
+            self._buffer.append((msg, t))
 
     def __enter__(self):
         """Register a subscription to the topic."""
@@ -134,6 +138,10 @@ class BagSource(Source):
             StopIteration: When there are no messages remaining in the bag.
         """
         _, msg, t = next(self._messages)
+        try:
+            t = msg.header.stamp
+        except:
+            pass
         return msg, t
 
     def __enter__(self):
