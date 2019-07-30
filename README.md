@@ -2,15 +2,15 @@
 
 A package that allows easy interchanging of ROS topics, rosbags, and other sources of and sinks for data.
 
-Note: To use ROSTopicSource or ROSTopicSink, there must have been a previous call to rospy.init_node().
+Note: To use TopicSource or TopicSink, there must have been a previous call to rospy.init_node().
 
 ## Usage
 Instantiate a topic source
 ```python
-from rospywrapper import ROSTopicSource
+from rospywrapper import TopicSource
 from sensor_msgs.msg import Image
 
-source = ROSTopicSource(
+source = TopicSource(
     topic='/camera/image',
     data_class=Image)
 ```
@@ -18,9 +18,9 @@ Instantiate a rosbag source
 ```python
 from rospywrapper import ROSBagSource
 
-source = ROSBagSource(
+source = BagSource(
     topic='/camera/image',
-    filename='input.bag')
+    pathname='input.bag')
 ```
 Use a source to show images
 ```python
@@ -38,13 +38,13 @@ Instantiate a topic sink
 ```python
 from rospywrapper import ROSTopicSink
 
-sink = ROSTopicSink()
+sink = TopicSink()
 ```
 Instantiate a rosbag sink
 ```python
 from rospywrapper import ROSBagSink
 
-sink = ROSBagSink(filename='output.bag')
+sink = BagSink(filename='output.bag')
 ```
 Write from source to sink
 ```python
