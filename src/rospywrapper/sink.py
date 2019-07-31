@@ -50,7 +50,11 @@ class TopicSink(Sink):
                 `data_class` is given in the constructor.
             t (rospy.time.Time): A timestamp for `data`.
         """
-        self._publisher.publish(data)
+        if type(data) is dict:
+            msg = self._data_class(**data)
+        else:
+            msg = self._data_class(data)
+        self._publisher.publish(msg)
 
     def __enter__(self):
         """Register the publisher."""
@@ -83,4 +87,8 @@ class BagSink(Sink):
                 `data_class` is given in the constructor.
             t (rospy.time.Time): A timestamp for `data`.
         """
-        self._bag.write(self._topic, self._data_class(data), t)
+        if type(data) is dict:
+            msg = self._data_class(**data)
+        else:
+            msg = self._data_class(data)
+        self._bag.write(self._topic, msg, t)
