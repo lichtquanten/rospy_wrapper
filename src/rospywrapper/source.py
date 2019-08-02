@@ -71,6 +71,9 @@ class TopicSource(Source):
             (tuple): tuple containing:
                 msg (genpy.Message): The earliest received message on the topic.
                 t (rospy.time.Time): The time of receiving msg.
+
+        Raises:
+            StopIteration: When rospy is shut down.
         """
         if self._threadsafe:
             while not rospy.is_shutdown():
@@ -84,6 +87,7 @@ class TopicSource(Source):
                     return self._buffer.pop(0)
                 else:
                     rospy.sleep(0.001)
+        raise StopIteration
 
     def _callback(self, msg):
         """Put message into buffer.
