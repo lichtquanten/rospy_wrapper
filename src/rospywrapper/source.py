@@ -56,7 +56,7 @@ class TopicSource(Source):
         self._data_class = data_class
         self._threadsafe = threadsafe
         if threadsafe:
-            self._buffer = Queue()
+            self._buffer = Queue.Queue()
         else:
             self._buffer = []
 
