@@ -16,7 +16,7 @@ source = TopicSource(
 ```
 Instantiate a rosbag source
 ```python
-from rospywrapper import ROSBagSource
+from rospywrapper import BagSource
 
 source = BagSource(
     topic='/camera/image',
@@ -34,29 +34,50 @@ with source:
     cv2.imshow(img)
     cv2.waitKey(2)
 ```
-Instantiate a topic sink
+Instantiate and use a topic sink
 ```python
-from rospywrapper import ROSTopicSink
+from rospywrapper import TopicSink
 
-sink = TopicSink()
+sink = TopicSink(
+    topic='/camera/gray',
+    data_class=Image)
+with sink:
+    # Use sink
 ```
-Instantiate a rosbag sink
+Instantiate and use a bag sink
 ```python
-from rospywrapper import ROSBagSink
+import rosbag
+from rospywrapper import BagSink
 
-sink = BagSink(filename='output.bag')
+bag = rosbag.Bag('out.bag', 'w')
+sink = BagSink(
+    bag=bag,
+    topic='/camera/image',
+    data_class=Image)
+with bag:
+    with sink:
+        # Use sink
 ```
 Write from source to sink
 ```python
-import cv2
-import numpy as np
+import conditional
 
-with source, sink:
-  for msg, t in source:
-    data = np.fromstring(msg['data'], np.uint8)
-    img = cv2.imdecode(data, cv2.CV_LOAD_IMAGE_COLOR)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    sink.put('/camera/image', Image, gray, t)
+if use_bag:
+    source = BagSource('in.bag', '/camera/image')
+    bag = rosbag.Bag('out.bag', 'w')
+    sink = BagSink(bag, '/camera/gray', Image)
+else:
+    source = BagSource('/camera/image', Image)
+    bag = None
+    sink = TopicSink('/camera/gray', Image)
+
+with conditional(bag is not None, bag):
+    with source, sink:
+      for msg, t in source:
+        data = np.fromstring(msg['data'], np.uint8)
+        img = cv2.imdecode(data, cv2.CV_LOAD_IMAGE_COLOR)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        sink.put(gray, t)
 ```
 Create a custom source
 ```python
