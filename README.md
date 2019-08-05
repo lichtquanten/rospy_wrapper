@@ -67,7 +67,7 @@ if use_bag:
     bag = rosbag.Bag('out.bag', 'w')
     sink = BagSink(bag, '/camera/gray', Image)
 else:
-    source = BagSource('/camera/image', Image)
+    source = TopicSource('/camera/image', Image)
     bag = None
     sink = TopicSink('/camera/gray', Image)
 
