@@ -33,14 +33,16 @@ class Sink(object):
 class TopicSink(Sink):
     """A class for publishing data to ROS topics."""
 
-    def __init__(self, topic, data_class):
+    def __init__(self, topic, data_class, queue_size=None):
         """Constructor.
         Args:
             topic (str): The resource name of a topic.
             data_class (genpy.Message): Messsage class for serialization of `data.`
+            queue_size (int, optional): `queue_size` of rospy publisher.
         """
         self._topic = topic
         self._data_class = data_class
+        self._queue_size = queue_size
 
     def put(self, data, t):
         """Publish data to the topic specified in the constructor.
@@ -58,7 +60,11 @@ class TopicSink(Sink):
 
     def __enter__(self):
         """Register the publisher."""
-        self._publisher = rospy.Publisher(self._topic, self._data_class)
+        if self._queue_size is not None:
+            self._publisher = rospy.Publisher(self._topic, self._data_class,
+            queue_size=self._queue_size)
+        else:
+            self._publisher = rospy.Publisher(self._topic, self._data_class)
         return self
 
     def __exit__(self, *exc):
