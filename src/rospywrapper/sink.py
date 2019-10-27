@@ -49,14 +49,17 @@ class TopicSink(Sink):
         """Publish data to the topic specified in the constructor.
 
         Args:
-            data: An acceptable input to the `data_class` constructor, where
-                `data_class` is given in the constructor.
+            data: A dictionary with acceptable inputs to the `data_class` constructor, where
+                `data_class` is given in the constructor, or an instance of
+                `data_class`
             t (rospy.time.Time): A timestamp for `data`.
         """
         if type(data) is dict:
             msg = self._data_class(**data)
+        elif isinstance(data, self._data_class):
+            msg = data
         else:
-            msg = self._data_class(data)
+            raise Exception('Data must be instance of message or dictionary')
         self._publisher.publish(msg)
 
     def __enter__(self):
@@ -97,6 +100,8 @@ class BagSink(Sink):
         """
         if type(data) is dict:
             msg = self._data_class(**data)
+        elif isinstance(data, self._data_class):
+            msg = data
         else:
-            msg = self._data_class(data)
+            raise Exception('Data must be instance of message or dictionary')
         self._bag.write(self._topic, msg, t)
